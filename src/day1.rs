@@ -35,7 +35,7 @@ pub fn p2(input: BufReader<File>) -> BoxResult<String> {
     let mut result: i32 = 0;
 
     for line in input.lines() {
-        let mut module = line?.parse::<i32>()?;
+        let module = line?.parse::<i32>()?;
         result = result + calc_fuel(&mut cache, module);
     }
 
