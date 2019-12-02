@@ -16,10 +16,6 @@ mod utils {
     const DEFAULT_RESOURCES_PATH: &str = "./resources";
 
     pub fn read_input(filename: &str) -> Result<BufReader<File>, std::io::Error> {
-        if env::var("RESOURCES_PATH").is_err() {
-            env::set_var("RESOURCES_PATH", "./resources");
-        }
-
         let path = Path::new(&env::var("RESOURCES_PATH").unwrap_or_else(|_| DEFAULT_RESOURCES_PATH.to_string())).join(filename);
         let file = File::open(path)?;
         let reader = BufReader::new(file);
