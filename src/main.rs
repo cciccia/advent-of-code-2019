@@ -1,11 +1,13 @@
 use std::env;
 
+#[macro_use]
 extern crate simple_error;
 
 use std::error::Error;
 use simple_error::SimpleError;
 
 mod day1;
+mod day2;
 
 mod utils {
     use std::io::{BufReader};
@@ -30,6 +32,8 @@ fn dispatch(day: &str, part: &str, input_or_filename: &str) {
     let result = match (day.trim_start_matches('0'), part) {
         ("1", "1") => day1::p1(utils::read_input(input_or_filename).unwrap()),
         ("1", "2") => day1::p2(utils::read_input(input_or_filename).unwrap()),
+        ("2", "1") => day2::p1(utils::read_input(input_or_filename).unwrap()),
+        ("2", "2") => day2::p2(utils::read_input(input_or_filename).unwrap()),
         _ => Err(Box::from(SimpleError::new(format!("No day/part combo found for: {}, {}", day, part)))),
     };
 
