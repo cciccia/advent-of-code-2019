@@ -8,6 +8,7 @@ use simple_error::SimpleError;
 
 mod day1;
 mod day2;
+mod day3;
 
 mod utils {
     use std::io::{BufReader};
@@ -34,6 +35,8 @@ fn dispatch(day: &str, part: &str, input_or_filename: &str) {
         ("1", "2") => day1::p2(utils::read_input(input_or_filename).unwrap()),
         ("2", "1") => day2::p1(utils::read_input(input_or_filename).unwrap()),
         ("2", "2") => day2::p2(utils::read_input(input_or_filename).unwrap()),
+        ("3", "1") => day3::p1(utils::read_input(input_or_filename).unwrap()),
+        ("3", "2") => day3::p2(utils::read_input(input_or_filename).unwrap()),
         _ => Err(Box::from(SimpleError::new(format!("No day/part combo found for: {}, {}", day, part)))),
     };
 
