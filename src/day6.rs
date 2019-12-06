@@ -3,24 +3,17 @@ use crate::BoxResult;
 use std::fs::File;
 use std::collections::{HashMap, HashSet};
 
-struct Space {
-    orbits: HashMap<String, String>,
-    planets: Vec<String>,
-}
+type Space = HashMap<String, String>;
 
 fn build_space(input: BufReader<File>) -> Space {
-    let mut space = Space {
-        orbits: HashMap::new(),
-        planets: Vec::new(),
-    };
+    let mut space = HashMap::new();
 
     for line in input.lines() {
         let line_val = line.unwrap();
         let vals: Vec<&str> = line_val.split(")").collect();
         let orbitee = vals[0];
         let orbiter = vals[1];
-        space.orbits.insert(orbiter.to_string(), orbitee.to_string());
-        space.planets.push(orbiter.to_string());
+        space.insert(orbiter.to_string(), orbitee.to_string());
     }
     space
 }
@@ -29,11 +22,11 @@ pub fn p1(input: BufReader<File>) -> BoxResult<String> {
     let space = build_space(input);
 
     let mut total = 0;
-    for planet in space.planets {
-        let mut current_planet = &planet;
-        while space.orbits.contains_key(current_planet) {
+    for planet in space.keys() {
+        let mut current_planet = planet;
+        while space.contains_key(current_planet) {
             total = total + 1;
-            current_planet = space.orbits.get(current_planet).unwrap();
+            current_planet = space.get(current_planet).unwrap();
         }
     }
     Ok(format!("{}", total))
@@ -43,9 +36,9 @@ fn all_orbits_for<'a>(space: &'a Space, origin: &'a str) -> HashSet<&'a str> {
     let mut all_orbits = HashSet::new();
     let mut current_planet = origin;
 
-    while space.orbits.contains_key(current_planet) {
+    while space.contains_key(current_planet) {
         all_orbits.insert(current_planet);
-        current_planet = space.orbits.get(current_planet).unwrap();
+        current_planet = space.get(current_planet).unwrap();
     }
     all_orbits
 }
