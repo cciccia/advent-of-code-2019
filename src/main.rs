@@ -37,8 +37,8 @@ mod utils {
 
 type BoxResult<T> = Result<T,Box<dyn Error>>;
 
-fn dispatch(day: &str, part: &str, input_or_filename: &str) {
-    let result = match (day.trim_start_matches('0'), part) {
+fn dispatch(day: &str, part: &str, input_or_filename: &str) -> BoxResult<String> {
+    match (day.trim_start_matches('0'), part) {
         ("1", "1") => day1::p1(utils::read_input(input_or_filename).unwrap()),
         ("1", "2") => day1::p2(utils::read_input(input_or_filename).unwrap()),
         ("2", "1") => day2::p1(utils::read_input(input_or_filename).unwrap()),
@@ -54,9 +54,7 @@ fn dispatch(day: &str, part: &str, input_or_filename: &str) {
         ("7", "1") => day7::p1(utils::read_input(input_or_filename).unwrap()),
         ("7", "2") => day7::p2(utils::read_input(input_or_filename).unwrap()),
         _ => Err(Box::from(SimpleError::new(format!("No day/part combo found for: {}, {}", day, part)))),
-    };
-
-    println!("Result for Day {} Part {} was: {}", day, part, result.unwrap())
+    }
 }
 
 fn main() {
@@ -66,5 +64,7 @@ fn main() {
     let part = &args[2];
     let input_or_file = &args[3];
 
-    dispatch(day, part, input_or_file)
+    let result = dispatch(day, part, input_or_file).unwrap();
+
+    println!("Result for Day {} Part {} was: {}", day, part, result);
 }
