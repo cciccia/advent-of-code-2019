@@ -15,21 +15,21 @@ pub fn p1(input: BufReader<File>) -> BoxResult<String> {
 
     let mut i = 0;
     for command in input.split(b',') {
-        let parsed = from_utf8(&command.unwrap()).unwrap().parse::<i32>().unwrap();
+        let parsed = from_utf8(&command.unwrap()).unwrap().parse::<i64>().unwrap();
         commands.insert(i, parsed);
         i = i + 1;
     }
 
-    let combos: Vec<Vec<i32>> = (0..5).permutations(5).collect();
+    let combos: Vec<Vec<i64>> = (0..5).permutations(5).collect();
     let result = combos.into_par_iter().map(|combo| {
         let mut threads = Vec::new();
 
-        let (tx_ia, rx_ia): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_ab, rx_ab): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_bc, rx_bc): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_cd, rx_cd): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_de, rx_de): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_eo, rx_eo): (Sender<i32>, Receiver<i32>) = mpsc::channel();
+        let (tx_ia, rx_ia): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_ab, rx_ab): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_bc, rx_bc): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_cd, rx_cd): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_de, rx_de): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_eo, rx_eo): (Sender<i64>, Receiver<i64>) = mpsc::channel();
 
         tx_ia.send(combo[0]).unwrap();
         tx_ab.send(combo[1]).unwrap();
@@ -76,21 +76,21 @@ pub fn p2(input: BufReader<File>) -> BoxResult<String> {
 
     let mut i = 0;
     for command in input.split(b',') {
-        let parsed = from_utf8(&command.unwrap()).unwrap().parse::<i32>().unwrap();
+        let parsed = from_utf8(&command.unwrap()).unwrap().parse::<i64>().unwrap();
         commands.insert(i, parsed);
         i = i + 1;
     }
 
-    let combos: Vec<Vec<i32>> = (5..10).permutations(5).collect();
+    let combos: Vec<Vec<i64>> = (5..10).permutations(5).collect();
     let result = combos.into_par_iter().map(|combo| {
         let mut threads = Vec::new();
 
-        let (tx_ab, rx_ab): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_bc, rx_bc): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_cd, rx_cd): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_de, rx_de): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_ea, rx_ea): (Sender<i32>, Receiver<i32>) = mpsc::channel();
-        let (tx_o, rx_o): (Sender<i32>, Receiver<i32>) = mpsc::channel();
+        let (tx_ab, rx_ab): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_bc, rx_bc): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_cd, rx_cd): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_de, rx_de): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_ea, rx_ea): (Sender<i64>, Receiver<i64>) = mpsc::channel();
+        let (tx_o, rx_o): (Sender<i64>, Receiver<i64>) = mpsc::channel();
         let tx_ia = tx_ea.clone();
 
         tx_ea.send(combo[0]).unwrap();
