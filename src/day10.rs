@@ -1,8 +1,10 @@
 use std::io::{BufReader, BufRead};
 use std::fs::File;
 use crate::BoxResult;
-use std::collections::HashMap;
+use std::collections::{HashSet, HashMap};
 use itertools::Itertools;
+use ordered_float::OrderedFloat;
+use std::f64::consts::PI;
 
 #[derive(Hash, Eq, PartialEq, Debug, Clone)]
 struct Point {
@@ -10,29 +12,17 @@ struct Point {
     y: i32,
 }
 
-fn can_see(asteroids: &Vec<Point>, from: &Point, to: &Point) -> bool {
-    let delta_x = to.x - from.x;
-    let delta_y = to.y - from.y;
+const F_0: f64 = 0 as f64;
 
-    from != to && !asteroids.iter().any(|asteroid| {
-        if asteroid != from && asteroid != to &&
-            (from.x <= asteroid.x && asteroid.x <= to.x || from.x >= asteroid.x && asteroid.x >= to.x) &&
-            (from.y <= asteroid.y && asteroid.y <= to.y || from.y >= asteroid.y && asteroid.y >= to.y) &&
-            match (delta_x, delta_y) {
-                (0, _) => asteroid.x == from.x,
-                (_, 0) => asteroid.y == from.y,
-                (_, _) => f64::from(asteroid.x - from.x) / f64::from(delta_x) == f64::from(asteroid.y - from.y) / f64::from(delta_y)
-            } {
-        }
-        asteroid != from && asteroid != to &&
-            (from.x <= asteroid.x && asteroid.x <= to.x || from.x >= asteroid.x && asteroid.x >= to.x) &&
-            (from.y <= asteroid.y && asteroid.y <= to.y || from.y >= asteroid.y && asteroid.y >= to.y) &&
-            match (delta_x, delta_y) {
-                (0, _) => asteroid.x == from.x,
-                (_, 0) => asteroid.y == from.y,
-                (_, _) => f64::from(asteroid.x - from.x) / f64::from(delta_x) == f64::from(asteroid.y - from.y) / f64::from(delta_y)
-            }
-    })
+fn angle(from: &Point, to: &Point) -> OrderedFloat<f64> {
+    let delta_y = f64::from(to.y - from.y);
+    let delta_x = f64::from(to.x - from.x);
+    if delta_x == F_0 {
+        if delta_y > F_0 {OrderedFloat(0 as f64)} else {OrderedFloat(std::f64::consts::PI as f64)}
+    } else {
+        let angle = delta_y.atan2(delta_x) + PI/(2 as f64);
+        OrderedFloat(if angle < 0 as f64 {angle + PI * 2 as f64} else {angle})
+    }
 }
 
 pub fn p1(input: BufReader<File>) -> BoxResult<String> {
@@ -47,15 +37,18 @@ pub fn p1(input: BufReader<File>) -> BoxResult<String> {
         }
     }
 
-    let sorted: (Point, i32) = asteroids.iter().map(|from_asteroid| {
-        (from_asteroid.clone(), asteroids.clone().iter().fold(0, |acc, to_asteroid| {
-            if can_see(&asteroids, &from_asteroid, &to_asteroid) { acc + 1 } else { acc }
-        }))
-    })
+    let result: (Point, i32) = asteroids.iter()
+        .map(|from_asteroid| {
+            let mut slopes = HashSet::new();
+            for to_asteroid in asteroids.clone().iter() {
+                slopes.insert(angle(from_asteroid, to_asteroid));
+            }
+            (from_asteroid.clone(), slopes.iter().count() as i32)
+        })
         .sorted_by_key(|v| v.1)
         .last().unwrap();
 
-    Ok(format!("{:?}", sorted))
+    Ok(format!("{:?}", result))
 }
 
 pub fn p2(input: BufReader<File>) -> BoxResult<String> {
@@ -71,8 +64,33 @@ pub fn p2(input: BufReader<File>) -> BoxResult<String> {
     }
 
     let origin = Point {x: 11, y: 19};  // let's assume i knew this
+    let mut slope_buckets = HashMap::new();
 
-
-
-
+    for asteroid in asteroids.into_iter() {
+        let slope = angle(&origin, &asteroid);
+        if !(slope_buckets.contains_key(&slope)) {
+            slope_buckets.insert(slope, Vec::new());
+        }
+        let mut bucket: Vec<Point> = slope_buckets.get(&slope).unwrap().to_vec();
+        let seek = (asteroid.x - origin.x).abs() + (asteroid.y - origin.y).abs();
+        let pos = bucket.binary_search_by(|existing_asteroid| {
+            ((existing_asteroid.x - origin.x).abs() + (existing_asteroid.y - origin.y).abs()).cmp(&seek)
+        }).unwrap_or_else(|e| e);
+        bucket.insert(pos, asteroid);
+        slope_buckets.insert(slope, bucket);
+    }
+    let mut i = 0;
+    loop {
+        for key in slope_buckets.clone().keys().sorted() {
+            let mut bucket = slope_buckets.get(&key).unwrap().clone();
+            if !(bucket.is_empty()) {
+                let popped = bucket.remove(0);
+                i = i + 1;
+                if i == 200 {
+                    return Ok(format!("{}", popped.x * 100 + popped.y));
+                }
+                slope_buckets.insert(*key, bucket);
+            }
+        }
+    }
 }
