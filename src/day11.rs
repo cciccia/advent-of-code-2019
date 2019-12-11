@@ -172,9 +172,7 @@ pub fn p2(input: BufReader<File>) -> BoxResult<String> {
         current_direction = turn_robot(&current_direction, turn).unwrap();
         current_position = move_robot(&current_position, &current_direction).unwrap();
     }
-
-    println!("minx={}, maxx={}, miny={}, maxy= {}", min_x, max_x, min_y, max_y);
-
+    
     let mut out = String::new();
     out.push_str("\n");
     for y in -max_y..-min_y+1 {
