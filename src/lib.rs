@@ -17,6 +17,8 @@ pub mod day8;
 pub mod day9;
 pub mod day10;
 pub mod day11;
+pub mod day12;
+pub mod day12two;
 
 mod intcode;
 
@@ -63,6 +65,8 @@ pub fn dispatch(day: &str, part: &str, input_or_filename: &str) -> BoxResult<Str
         ("10", "2") => day10::p2(utils::read_input(input_or_filename).unwrap()),
         ("11", "1") => day11::p1(utils::read_input(input_or_filename).unwrap()),
         ("11", "2") => day11::p2(utils::read_input(input_or_filename).unwrap()),
+        ("12", "1") => day12::p1(utils::read_input(input_or_filename).unwrap()),
+        ("12", "2") => day12two::p2(utils::read_input(input_or_filename).unwrap()),
         _ => Err(Box::from(SimpleError::new(format!("No day/part combo found for: {}, {}", day, part)))),
     }
 }
