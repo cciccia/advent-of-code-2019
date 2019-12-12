@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::io::BufReader;
 use std::fs::File;
 use crate::BoxResult;
@@ -51,9 +50,7 @@ fn next_pos(jupiter: &Jupiter) -> Jupiter {
 }
 
 fn do_axis(i: i64, e: i64, g: i64, c: i64) -> i64 {
-    let mut seen = HashSet::new();
-    let mut count = 0;
-    let mut jupiter = Jupiter {
+    let origin = Jupiter {
         i_pos: i,
         e_pos: e,
         g_pos: g,
@@ -63,14 +60,14 @@ fn do_axis(i: i64, e: i64, g: i64, c: i64) -> i64 {
         g_vel: 0,
         c_vel: 0,
     };
-    seen.insert(jupiter.clone());
+    let mut count = 0;
+    let mut jupiter = origin.clone();
     loop {
         jupiter = next_pos(&next_vel(&jupiter));
         count = count + 1;
-        if seen.contains(&jupiter) {
+        if jupiter == origin {
             break;
         }
-        seen.insert(jupiter.clone());
     }
 
     count
