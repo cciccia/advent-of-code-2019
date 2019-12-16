@@ -3,6 +3,9 @@ extern crate simple_error;
 
 extern crate rayon;
 
+extern crate num_derive;
+
+
 use std::error::Error;
 use simple_error::SimpleError;
 
@@ -19,6 +22,7 @@ pub mod day10;
 pub mod day11;
 pub mod day12;
 pub mod day12two;
+pub mod day14;
 
 mod intcode;
 
@@ -67,6 +71,7 @@ pub fn dispatch(day: &str, part: &str, input_or_filename: &str) -> BoxResult<Str
         ("11", "2") => day11::p2(utils::read_input(input_or_filename).unwrap()),
         ("12", "1") => day12::p1(utils::read_input(input_or_filename).unwrap()),
         ("12", "2") => day12two::p2(utils::read_input(input_or_filename).unwrap()),
+        ("14", "1") => day14::p1(utils::read_input(input_or_filename).unwrap()),
         _ => Err(Box::from(SimpleError::new(format!("No day/part combo found for: {}, {}", day, part)))),
     }
 }

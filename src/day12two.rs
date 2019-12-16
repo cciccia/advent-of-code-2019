@@ -80,7 +80,6 @@ pub fn p2(_input: BufReader<File>) -> BoxResult<String> {
     let (tx_y, rx_y): (Sender<i64>, Receiver<i64>) = mpsc::channel();
     let (tx_z, rx_z): (Sender<i64>, Receiver<i64>) = mpsc::channel();
 
-
     threads.push(thread::spawn(move || {
         let x = do_axis(9, -3, -4, 0);
         tx_x.send(x).unwrap();
